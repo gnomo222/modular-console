@@ -1,3 +1,6 @@
+#
+# This project uses Lua 5.4.6
+#
 # Put your own lua src directory path here
 LUASRCDIR = ../lua/lua
 # Put your lua lib here. May be liblua.a or lua54.lib
@@ -48,7 +51,6 @@ ${OUTDIR}:
 ${OBJDIR}:
 	${MKDIR} ${OBJDIR}
 
-    
 .PHONY: clean
 clean:
 	${RM}
