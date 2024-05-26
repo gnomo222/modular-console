@@ -42,7 +42,7 @@ commName = getUnsynonymized(comm[1])
 if commName == "exit" then os.exit() end
 commPath = getCommPath(commName)
 if commPath then
-   loadfile("./comm/"..commPath..".lua")(unpack(comm, 2))
+   loadfile("./comms/"..commPath..".lua")(unpack(comm, 2))
 else
     print(commName, unpack(comm, 2))
 end
