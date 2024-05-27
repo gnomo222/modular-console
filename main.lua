@@ -1,4 +1,7 @@
-package.cpath = "./?.dll;./bin/?.dll;"
+local BIN = "./bin"
+local LIB = BIN.."/lib.dll"
+
+package.cpath = "./?.dll;"..BIN.."/?.dll;"
 package.path = "./modules/?.lua;./?.lua;"
 
 DATE = require("date")
@@ -18,8 +21,8 @@ local write = function(...)
     flush()
 end
 
-local getUserInput = require("getUserInput")
-local formatDate = require("formatDate")
+local getUserInput = package.loadlib(LIB, "luaopen_getUserInput")()
+local formatDate = package.loadlib(LIB, "luaopen_formatDate")()
 local getFiles = require("getFiles")
 
 local getUnsynonymized = require("getUnsynonymized")

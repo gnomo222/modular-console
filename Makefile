@@ -2,17 +2,20 @@
 # This project uses Lua 5.4.6
 #
 # Put your own lua src directory path here
-LUASRCDIR = ../lua/lua
-# Put your lua lib here. May be liblua.a or lua54.lib
-LIBLUA = ${LUASRCDIR}/liblua.a
+LUASRCDIR = #../lua/lua
+# Put your lua lib here. Usually is lua or lua54
+LIBLUA = lua54
 
 SRCDIR = src
 OUTDIR = bin
 OBJDIR = obj
 
+# If you have UPX (Ultimate Packer for eXecutables), uncomment this line
+UPX = upx --best --lzma ${OUTDIR}/*.dll
+
 CC = gcc
 CFLAGS = -fomit-frame-pointer -fexpensive-optimizations -std=c17 -Os -I${LUASRCDIR} -c
-OFLAGS = -shared -s
+OFLAGS = -shared -s -L${LUASRCDIR} -l${LIBLUA}
 
 MKDIR = mkdir
 
@@ -24,26 +27,25 @@ del /q "${OBJDIR}\*.o"
 del /q "${OUTDIR}\*.dll"
 endef
 
-all: input fmtdate files
 redo: clean all
+all: ${OUTDIR}/lib.dll files compress
 
-input: ${OUTDIR}/getUserInput.dll
-${OUTDIR}/getUserInput.dll: ${OBJDIR}/getUserInput.o ${OUTDIR}
-	${CC} ${OFLAGS} -o $@ $< ${LIBLUA} 
-${OBJDIR}/getUserInput.o: ${SRCDIR}/getUserInput.c ${OBJDIR} 
+lib: ${OUTDIR}/lib.dll ${OUTDIR} ${OBJDIR}
+${OUTDIR}/lib.dll: ${OBJDIR}/getUserInput.o ${OBJDIR}/formatDate.o
+	${CC} ${OFLAGS} -o $@ $?
+${OBJDIR}/getUserInput.o: ${SRCDIR}/getUserInput.c
+	${CC} ${CFLAGS} -o $@ $<
+${OBJDIR}/formatDate.o: ${SRCDIR}/formatDate.c
 	${CC} ${CFLAGS} -o $@ $<
 
-fmtdate: ${OUTDIR}/formatDate.dll
-${OUTDIR}/formatDate.dll: ${OBJDIR}/formatDate.o ${OUTDIR}
-	${CC} ${OFLAGS} -o $@ $< ${LIBLUA}
-${OBJDIR}/formatDate.o: ${SRCDIR}/formatDate.c ${OBJDIR} 
+files: ${OUTDIR}/getFiles.dll ${OUTDIR} ${OBJDIR}
+${OUTDIR}/getFiles.dll: ${OBJDIR}/getFiles.o 
+	${CC} ${OFLAGS} -o $@ $<
+${OBJDIR}/getFiles.o: getFiles.c 
 	${CC} ${CFLAGS} -o $@ $<
 
-files: ${OUTDIR}/getFiles.dll
-${OUTDIR}/getFiles.dll: ${OBJDIR}/getFiles.o ${OUTDIR}
-	${CC} ${OFLAGS} -o $@ $< ${LIBLUA}
-${OBJDIR}/getFiles.o: getFiles.c ${OBJDIR}
-	${CC} ${CFLAGS} -o $@ $<
+compress:
+	${UPX}
 
 dir: ${OUTDIR} ${OBJDIR}
 ${OUTDIR}:
