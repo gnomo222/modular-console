@@ -63,7 +63,7 @@ int getFiles(lua_State *L)
     return 1;
 }
 
-EXPORT int luaopen_getFiles(lua_State *L) 
+int luaopen_getFiles(lua_State *L) 
 { 
     lua_pushcfunction(L, getFiles);
     return 1;

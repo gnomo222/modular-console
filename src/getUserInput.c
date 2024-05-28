@@ -1,5 +1,3 @@
-#include <termios.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -7,14 +5,10 @@
 #include "words.h"
 #define BUFFER_SIZE 4096
 
-#ifdef _WIN64
-#	include <wchar.h>
-#	include <windows.h>
-#	if !ENABLE_VIRTUAL_TERMINAL_PROCESSING
-#		define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
-#	endif
-#endif
 
+#ifdef __linux__
+#	include <termios.h>
+#	include <unistd.h>
 static int getch(void)
 {
 	struct termios oldattr, newattr;
@@ -27,6 +21,14 @@ static int getch(void)
 	tcsetattr( STDIN_FILENO, TCSANOW, &oldattr );
 	return ch;
 }
+#elif _WIN64
+#	include <wchar.h>
+#	include <windows.h>
+#	if !ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#		define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+#	endif
+#endif
+
 
 int getInput(lua_State *L)
 {
@@ -34,7 +36,7 @@ int getInput(lua_State *L)
 	int len = 0;
 #ifdef _WIN32
 	fgets(input, BUFFER_SIZE, stdin);
-	len = sizeof(input);
+	len = strlen(input)-1;
 #else
 	char chs[16] = {};
 	int sel = 0;

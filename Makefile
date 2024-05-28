@@ -3,40 +3,51 @@
 #
 # Put your own lua src directory path here
 LUASRCDIR = ../lua-5.4.6/src
-# Put your lua lib here. Usually is lua or lua54
-LIBLUA = lua
+# Put your lua lib here. Usually is "lua" for Linux and "lua54" for Windows
+LIBLUA = lua54
 
 SRCDIR = src
 OUTDIR = bin
 OBJDIR = obj
 
+plataform = mingw
+# possible values: mingw, linux
+
 # If you have UPX (Ultimate Packer for eXecutables), uncomment this line
-# UPX = upx --best --lzma ${OUTDIR}/*.dll # Works best on Windows
+# UPX = upx --best --lzma ${OUTDIR}/*.dll 
+# Works best on Windows
 
 CC = gcc -std=c17
 CFLAGS = -fPIC -Wall -Wextra -O2 -I${LUASRCDIR} -c
-OFLAGS = -shared -s -L${LUASRCDIR} -l${LIBLUA} -lcurses
+OFLAGS = -shared -s -L${LUASRCDIR} -l${LIBLUA}
+
+FILENAMES = getUserInput formatDate
+
+SRCS = ${FILENAMES:%=${SRCDIR}/%.c}
+OBJS = ${FILENAMES:%=${OBJDIR}/%.o}
 
 MKDIR = mkdir
+S = /
+RM = rm -f
 
-# If you're using Linux, uncomment the following line
-RM = rm -f ${OBJDIR}/*.o ${OUTDIR}/*.dll
-# else, if you're using Windows, uncomment this definition
-# define RM
-# del /q "${OBJDIR}\*.o"
-# del /q "${OUTDIR}\*.dll"
-# endef
+all: ${plataform} dir lib files compress 
+redo: ${plataform} clean dir files lib compress
 
-redo: clean all
-all: dir ${OUTDIR}/lib.dll files compress
+unknown:
+	$(error please, configure the Makefile)
+
+mingw:
+	$(eval S := \)
+	$(eval RM := del /q)
+	$(eval CC += -D__USE_MINGW_ANSI_STDIO)
+linux:
+	$(eval OFLAGS += -lcurses)
 
 lib: ${OUTDIR}/lib.dll ${OUTDIR} ${OBJDIR}
 ${OUTDIR}/lib.dll: ${OBJDIR}/getUserInput.o ${OBJDIR}/formatDate.o
 	${CC} ${OFLAGS} -o $@ $?
-${OBJDIR}/getUserInput.o: ${SRCDIR}/getUserInput.c
-	${CC} ${CFLAGS} -o $@ $<
-${OBJDIR}/formatDate.o: ${SRCDIR}/formatDate.c
-	${CC} ${CFLAGS} -o $@ $<
+${OBJDIR}/%.o: ${SRCDIR}/%.c
+	${CC} ${CSTD} ${CFLAGS} -o $@ -c $<
 
 files: ${OUTDIR}/getFiles.dll ${OUTDIR} ${OBJDIR}
 ${OUTDIR}/getFiles.dll: ${OBJDIR}/getFiles.o 
@@ -45,7 +56,9 @@ ${OBJDIR}/getFiles.o: getFiles.c
 	${CC} ${CFLAGS} -o $@ $<
 
 compress:
+ifdef UPX
 	${UPX}
+endif
 
 dir: ${OUTDIR} ${OBJDIR}
 ${OUTDIR}:
@@ -54,5 +67,5 @@ ${OBJDIR}:
 	${MKDIR} ${OBJDIR}
 
 .PHONY: clean
-clean:
-	${RM}
+clean: ${plataform}
+	${RM} ${OBJDIR}$S*.o ${OUTDIR}$S*.dll
