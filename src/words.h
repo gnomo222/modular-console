@@ -74,7 +74,7 @@ char* substr(const char* src, const int start, const int end)
     return ret;
 }
 
-static char* parse_word(const char* str, int* offset)
+static char* parse_word(const char* str, size_t* offset)
 {
     char* word = NULL;
     bool isQuoting = false;
@@ -108,12 +108,12 @@ static char* parse_word(const char* str, int* offset)
     return word;
 }
 
-WordArray parse_wordarray(const char* str)
+WordArray parse_wordarray(const char* str, size_t len)
 {
     WordArray wordArray = {0};
-    int offset = 0;
+    size_t offset = 0;
     LOOP_START:
-    if (str[offset] == 0) return wordArray;
+    if (offset>=len) return wordArray;
     wordArray.words = realloc(wordArray.words, (++wordArray.word_count)*sizeof(char*));
     FAILED_ALLOC_ASSERT(wordArray.words, wordArray.word_count*sizeof(char*));
     wordArray.words[wordArray.word_count-1]=parse_word(str+offset, &offset);

@@ -7,7 +7,7 @@
 #define DATE_START 0
 #endif
 
-void setFormatedDate(struct tm tm, char *dateString)
+static void setFormatedDate(struct tm tm, char *dateString)
 {
     int mon = (tm.tm_mon+1);
     int year = (tm.tm_year+1900);
@@ -22,7 +22,7 @@ void setFormatedDate(struct tm tm, char *dateString)
     dateString[DATE_START+9] = (char)      (year%10)+'0';
 }
 
-int doWhatever(lua_State *L)
+static int doWhatever(lua_State *L)
 {
     int day = (int)luaL_checkinteger(L, 1);
     int month = (int)luaL_checkinteger(L, 2);

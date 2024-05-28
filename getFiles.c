@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include <stdio.h> 
 #include <stdlib.h>
 #include <string.h>
@@ -20,6 +19,7 @@ int getFiles(lua_State *L)
 {
     char* path = (char*) luaL_checkstring(L, 1);
     char* ext = (char*) luaL_checkstring(L, 2);
+    size_t pathlen = strlen(path);
     lua_newtable(L);
     struct dirent *de;
     DIR *dr = opendir(path); 
@@ -36,16 +36,28 @@ int getFiles(lua_State *L)
     int index = 1;
     size_t extLen = strlen(ext);
     while ((de = readdir(dr)) != NULL) {
+    	if (de->d_name[0]=='.') continue;
         struct stat stbuf;
         size_t len;
-        stat(de->d_name, &stbuf);
-        isFile = !S_ISDIR(stbuf.st_mode);
         len = strlen(de->d_name);
+		char *fullpath = malloc(sizeof(char)*(pathlen+len+2));
+		memcpy(fullpath, path, pathlen);
+		fullpath[pathlen]='/';
+		memcpy(fullpath+pathlen+1, de->d_name, len);
+		fullpath[pathlen+len+1]=0;
+		if (stat(fullpath, &stbuf) != 0) {
+			free(fullpath);
+			closedir(dr);
+			printf("stat function failed!");
+			exit(1);
+		};
+        isFile = S_ISREG(stbuf.st_mode);
         if (isFile && (strcmp(de->d_name+len-extLen,ext) == 0)) {
             de->d_name[len-extLen-1]=0;
             lua_pushstring(L, de->d_name);
             lua_rawseti(L, -2, index++);
         }
+        free(fullpath);
     }
     closedir(dr);
     return 1;

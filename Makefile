@@ -2,33 +2,33 @@
 # This project uses Lua 5.4.6
 #
 # Put your own lua src directory path here
-LUASRCDIR = #../lua/lua
+LUASRCDIR = ../lua-5.4.6/src
 # Put your lua lib here. Usually is lua or lua54
-LIBLUA = lua54
+LIBLUA = lua
 
 SRCDIR = src
 OUTDIR = bin
 OBJDIR = obj
 
 # If you have UPX (Ultimate Packer for eXecutables), uncomment this line
-UPX = upx --best --lzma ${OUTDIR}/*.dll
+# UPX = upx --best --lzma ${OUTDIR}/*.dll # Works best on Windows
 
-CC = gcc
-CFLAGS = -fomit-frame-pointer -fexpensive-optimizations -std=c17 -Os -I${LUASRCDIR} -c
-OFLAGS = -shared -s -L${LUASRCDIR} -l${LIBLUA}
+CC = gcc -std=c17
+CFLAGS = -fPIC -Wall -Wextra -O2 -I${LUASRCDIR} -c
+OFLAGS = -shared -s -L${LUASRCDIR} -l${LIBLUA} -lcurses
 
 MKDIR = mkdir
 
 # If you're using Linux, uncomment the following line
-# RM = rm -f "${OBJDIR}/*.o" "${OUTDIR}/*.dll"
+RM = rm -f ${OBJDIR}/*.o ${OUTDIR}/*.dll
 # else, if you're using Windows, uncomment this definition
-define RM
-del /q "${OBJDIR}\*.o"
-del /q "${OUTDIR}\*.dll"
-endef
+# define RM
+# del /q "${OBJDIR}\*.o"
+# del /q "${OUTDIR}\*.dll"
+# endef
 
 redo: clean all
-all: ${OUTDIR}/lib.dll files compress
+all: dir ${OUTDIR}/lib.dll files compress
 
 lib: ${OUTDIR}/lib.dll ${OUTDIR} ${OBJDIR}
 ${OUTDIR}/lib.dll: ${OBJDIR}/getUserInput.o ${OBJDIR}/formatDate.o
