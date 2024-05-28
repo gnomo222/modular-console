@@ -10,7 +10,7 @@ SRCDIR = src
 OUTDIR = bin
 OBJDIR = obj
 
-plataform = mingw
+plataform = unknown
 # possible values: mingw, linux
 
 # If you have UPX (Ultimate Packer for eXecutables), uncomment this line
