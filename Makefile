@@ -1,6 +1,7 @@
 #
 # This project uses Lua 5.4.6
 #
+
 # Put your own lua src directory path here
 LUASRCDIR = ../lua-5.4.6/src
 # Put your lua lib here. Usually is "lua" for Linux and "lua54" for Windows
@@ -10,28 +11,30 @@ SRCDIR = src
 OUTDIR = bin
 OBJDIR = obj
 
-plataform = unknown
+GFS_OBJDIR = ${OBJDIR}/gnomofs
+
+plataform = mingw
 # possible values: mingw, linux
 
 # If you have UPX (Ultimate Packer for eXecutables), uncomment this line
-# UPX = upx --best --lzma ${OUTDIR}/*.dll 
+UPX = upx -q --best --lzma
 # Works best on Windows
 
 CC = gcc -std=c17
 CFLAGS = -fPIC -Wall -Wextra -O2 -I${LUASRCDIR} -c
 OFLAGS = -shared -s -L${LUASRCDIR} -l${LIBLUA}
 
-FILENAMES = getUserInput formatDate
+LIB_NAMES = getUserInput formatDate clear
+GFS_NAMES = mkdir getfiles gnomofs
 
-SRCS = ${FILENAMES:%=${SRCDIR}/%.c}
-OBJS = ${FILENAMES:%=${OBJDIR}/%.o}
+LIB_OBJS = ${LIB_NAMES:%=${OBJDIR}/%.o}
+GFS_OBJS = ${GFS_NAMES:%=${GFS_OBJDIR}/%.o}
 
-MKDIR = mkdir
+MKDIR = mkdir -p
 S = /
 RM = rm -f
 
-all: ${plataform} dir lib files compress 
-redo: ${plataform} clean dir files lib compress
+all: lib gnomofs 
 
 unknown:
 	$(error please, configure the Makefile)
@@ -39,33 +42,30 @@ unknown:
 mingw:
 	$(eval S := \)
 	$(eval RM := del /q)
+	$(eval MKDIR := mkdir)
 	$(eval CC += -D__USE_MINGW_ANSI_STDIO)
 linux:
 	$(eval OFLAGS += -lcurses)
 
-lib: ${OUTDIR}/lib.dll ${OUTDIR} ${OBJDIR}
-${OUTDIR}/lib.dll: ${OBJDIR}/getUserInput.o ${OBJDIR}/formatDate.o
+lib: ${plataform} ${OUTDIR} ${OBJDIR} ${OUTDIR}/lib.dll
+gnomofs: ${plataform} ${OUTDIR} ${GFS_OBJDIR} ${OUTDIR}/gnomofs.dll 
+${OUTDIR}/lib.dll: ${LIB_OBJS}
 	${CC} ${OFLAGS} -o $@ $?
+	${UPX} $@
+${OUTDIR}/gnomofs.dll: ${GFS_OBJS}
+	${CC} ${OFLAGS} -o $@ $?
+	${UPX} $@
+
 ${OBJDIR}/%.o: ${SRCDIR}/%.c
 	${CC} ${CSTD} ${CFLAGS} -o $@ -c $<
 
-files: ${OUTDIR}/getFiles.dll ${OUTDIR} ${OBJDIR}
-${OUTDIR}/getFiles.dll: ${OBJDIR}/getFiles.o 
-	${CC} ${OFLAGS} -o $@ $<
-${OBJDIR}/getFiles.o: getFiles.c 
-	${CC} ${CFLAGS} -o $@ $<
-
-compress:
-ifdef UPX
-	${UPX}
-endif
-
-dir: ${OUTDIR} ${OBJDIR}
 ${OUTDIR}:
-	${MKDIR} ${OUTDIR}
+	${MKDIR} "$@"
 ${OBJDIR}:
-	${MKDIR} ${OBJDIR}
+	${MKDIR} "$@"
+${GFS_OBJDIR}:
+	${MKDIR} "$@"
 
 .PHONY: clean
 clean: ${plataform}
-	${RM} ${OBJDIR}$S*.o ${OUTDIR}$S*.dll
+	${RM} "${OBJDIR}$S*.o" "${GFS_OBJDIR}$S*.o" "${OUTDIR}$S*.dll"

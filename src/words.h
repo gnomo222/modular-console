@@ -45,8 +45,8 @@ void rplcescsqncs(char **str)
                 ret[j] = (chs[1]-'0')*64+(chs[2]-'0')*8+(chs[3]-'0');
                 i+=3;
             } else { 
-                switch(chs[1]) {
-                case '\\': ret[j] = '\\'; break;
+	        switch(chs[1]) {
+                //case '\\': ret[j] = '\\'; break;
                 case 'n': ret[j] = '\n'; break;
                 case '0': ret[j] = 0; break;
                 case 't': ret[j] = '\t'; break;
@@ -81,9 +81,9 @@ static char* parse_word(const char* str, size_t* offset)
     bool foundEscapeCharacter = false;
     for (size_t i = 0; i<=strlen(str); i++) {
         switch (str[i]) {
-        case '\\': foundEscapeCharacter=(str[i-1]) != '\\'; break;
+        case '\\': foundEscapeCharacter=true; break;
         case '"':
-            if (str[i-1] == '\\') break;
+            if (str[i-1] == '\\' && str[i-2] != '\\') break;
             if (isQuoting) {
                 isQuoting = false;
                 word=substr(str, 1, i);

@@ -9,6 +9,7 @@
 
 #include "lauxlib.h"
 
+EXPORT int luaopen_clear(lua_State *L);
 EXPORT int luaopen_formatDate(lua_State *L);
 EXPORT int luaopen_getUserInput(lua_State *L);
 
