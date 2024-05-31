@@ -13,11 +13,11 @@ OBJDIR = obj
 
 GFS_OBJDIR = ${OBJDIR}/gnomofs
 
-plataform = mingw
+plataform = unknown
 # possible values: mingw, linux
 
 # If you have UPX (Ultimate Packer for eXecutables), uncomment this line
-UPX = upx -q --best --lzma
+# UPX = upx -q --best --lzma
 # Works best on Windows
 
 CC = gcc -std=c17
