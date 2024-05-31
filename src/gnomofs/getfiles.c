@@ -27,7 +27,7 @@ int getfiles(lua_State *L)
 	size_t extLen = strlen(ext);
 	char *fullpath;
 	while ((entry = readdir(dir)) != NULL) {
-		if (entry->d_name[0][0]=='.'&&(entry->d_name[0][1]=='.'||entry->d_name[0][1]==0)) continue;
+		if (entry->d_name[0]=='.'&&(entry->d_name[1]=='.'||entry->d_name[1]==0)) continue;
 		struct stat statbuffer;
 		size_t len;
 		len = strlen(entry->d_name);

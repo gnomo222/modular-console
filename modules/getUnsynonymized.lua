@@ -8,17 +8,18 @@ local function getUnsynonymized(name)
     local unsyn = ""
     local x, y = 0, 0
     for line in synonyms_file:lines() do
-        unsyn = line:gmatch("([^:%s]*)")()
+        unsyn, vals = line:gmatch("(%g+)[:=](.+)")()
+	if not unsyn or not vals then goto CONTINUE end
         if name==unsyn then
             synonyms_file:close()
             return unsyn
         end
-        x, y = line:find(name)
-        if x==y and x==nil then goto CONTINUE end
-        if line:sub(x-1, y+1):match(" %g+[ ;]") then
-            synonyms_file:close()
-            return unsyn
-        end
+        for v in vals:gmatch("([^,%s;]+)") do
+		if v==name then 
+			synonyms_file:close()
+			return unsyn
+		end
+	end
         ::CONTINUE::
     end
     synonyms_file:close()

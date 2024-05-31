@@ -13,18 +13,18 @@ OBJDIR = obj
 
 GFS_OBJDIR = ${OBJDIR}/gnomofs
 
-plataform = unknown
+plataform = mingw
 # possible values: mingw, linux
 
 # If you have UPX (Ultimate Packer for eXecutables), uncomment this line
-# UPX = upx -q --best --lzma
+UPX = upx -q --best --lzma
 # Works best on Windows
 
 CC = gcc -std=c17
 CFLAGS = -fPIC -Wall -Wextra -O2 -I${LUASRCDIR} -c
 OFLAGS = -shared -s -L${LUASRCDIR} -l${LIBLUA}
 
-LIB_NAMES = getUserInput formatDate clear
+LIB_NAMES = getUserInput formatDate clear getOS
 GFS_NAMES = mkdir getfiles gnomofs
 
 LIB_OBJS = ${LIB_NAMES:%=${OBJDIR}/%.o}
