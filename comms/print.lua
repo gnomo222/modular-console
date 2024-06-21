@@ -1,4 +1,4 @@
-local args = {...}
+local args = ...
 local write = io.write
 
 write(table.concat(args, ' '))

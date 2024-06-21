@@ -48,10 +48,17 @@ function M.get(self)
 	return rawget(self, "day") or tonumber(d("%d")), rawget(self, "month") or tonumber(d("%m")), rawget(self, "year") or tonumber(d("%Y"))
 end
 function M.fromargs(self, args)
-	local dflag = find(args, "-d")
-	local mflag = find(args, "-m")
-	local yflag = find(args, "-y")
+	local dflag = args["-d"] or args["--day"]
+	local mflag = args["-m"] or args["--month"]
+	local yflag = args["-y"] or args["--year"]
+	local dateflag = args["-D"] or args["--date"]
 	local chtbl = {}
+	if dateflag then
+		for v in dateflag:gmatch("[^/]+") do
+			chtbl[#chtbl+1]=v
+		end
+		self:change{day=tonumber(chtbl[1]),month=tonumber(chtbl[2]),year=tonumber(chtbl[3])}
+	return end
 	
 	local function assertisnumber(name, val)
 		local tn = tonumber(val)
@@ -59,9 +66,9 @@ function M.fromargs(self, args)
 		else chtbl[name]=tn end
 	end
 	
-	if dflag then assertisnumber("day",   args[dflag+1]) end
-	if mflag then assertisnumber("month", args[mflag+1]) end
-	if yflag then assertisnumber("year",  args[yflag+1]) end
+	if dflag then assertisnumber("day",   dflag) end
+	if mflag then assertisnumber("month", mflag) end
+	if yflag then assertisnumber("year",  yflag) end
 	self:change(chtbl)
 end
 function M.time(self)

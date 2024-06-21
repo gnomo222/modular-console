@@ -1,4 +1,4 @@
-local args = {...}
+local args = ...
 
 local supportsVTProcessing = supportsVTProcessing
 local ENTRIES_PATH = CONFIGS.ENTRIES_PATH
@@ -25,9 +25,9 @@ if supportsVTProcessing then
 	fmt_special = "\x1b[38;5;165m| %.2d*|\x1b[0m"
 else fmt_special = "| %.2d*|" end
 
-write(RED("/~---------------={ %.2d }=---------------~\\\n"):format(month))
+write(RED("/~------------={-%.2d--%.4d-}=------------~\\\n"):format(month,year))
 write(RED("| Su || Mo || Tu || We || Th || Fr || Sa |\n"))
-write(RED("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n"))
+write(RED("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"))
 for i=1, 42 do
 	if cday>ndays or (cday==1 and i~=startingwday) then write("|    |") goto CONTINUE end
 	do

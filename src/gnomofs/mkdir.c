@@ -1,4 +1,9 @@
-#include <dirent.h>
+#include <stdio.h> 
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h> 
+#include <stdbool.h>
+#include <sys/stat.h>
 
 #include "gnomofs.h"
 #include "../words.h"
@@ -45,19 +50,16 @@ int lua_mkdir(lua_State *L)
 		current_path[cplen] = 0;
 		if (dirarr[i][0]=='.'&&(dirarr[i][1]=='.'||dirarr[i][1]==0)) continue;
 		stts=MKDIR(current_path);
-#ifdef _WIN32
-		if (stts==-1) {
-			stts=0;
-			goto RETURN;
-		} else stts=1;
-#else
-		if (stts!=0) { 
-			stts = 0;
-			goto RETURN;
-		} else stts=1;
-#endif
 	}
-	RETURN:
+#ifdef _WIN32
+	if (stts==-1) {
+		stts=0;
+	} else stts=1;
+#else
+	if (stts!=0) { 
+		stts = 0;
+	} else stts=1;
+#endif
 	for (COUNT_TYPE i = 0; i<count; i++) {
 		free(dirarr[i]);
 	}

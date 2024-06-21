@@ -1,0 +1,2 @@
+bodyweight hamstring curls=10,10,9
+glute bridges=12

@@ -1,4 +1,4 @@
-local args = {...}
+local args = ...
 
 local ENTRIES_PATH = CONFIGS.ENTRIES_PATH
 local io=io

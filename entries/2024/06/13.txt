@@ -1,0 +1,3 @@
+bodyweight hamstring curls=6
+glute bridges=38
+sliding plank pull-forwards=5

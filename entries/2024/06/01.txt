@@ -1,0 +1,3 @@
+bodyweight leg extensions=10,9,9,9
+half pi side planks=45,35,35
+heel raises=13,13,13,12,12

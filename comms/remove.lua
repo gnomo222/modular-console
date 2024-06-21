@@ -1,15 +1,20 @@
-local args = {...}
+local args = ...
+
+local fileflag = args["--file"] or args["-f"]
+if #args == 0 and not fileflag then
+	io.write("Usage: remove [--file/-f] or (<name> [--all/-a])\n")
+	return
+end
 
 local ENTRIES_PATH = CONFIGS.ENTRIES_PATH
 local io=io
 local write = io.write
 local find = find
 local ldate = date.new()
-local fileflag = find(args, "--file") or find(args, "-f")
-local allflag = find(args, "--all") or find(args, "-a")
+local allflag = args["--all"] or args["-a"]
 local fullpath = ""
 
-ldate:fromargs(args)
+ldate:fromargs(args, 2)
 local day, mon, year = ldate:get()
 
 fullpath = ENTRIES_PATH..("/%.4d/%.2d/%.2d.txt"):format(year, mon, day)
@@ -28,8 +33,13 @@ else
 	local hastxt
 	for line in file:lines() do
 		hastxt=true
-		if (found and not allflag) or not line:sub(1, #args[1])==args[1] then str=str..line.."\n"
+		if (found and not allflag) or line:gmatch("([^=]+)")()~=args[1] then str=str..line.."\n"
 		else found = true end 
+	end
+	if not found then
+		write("Couldn't find exercise named "..args[1])
+		write("\n")
+		return
 	end
 	file:close()
 	if str=="" then removefile() return end

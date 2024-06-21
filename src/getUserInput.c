@@ -160,11 +160,14 @@ int getInput(lua_State *L)
 	}
 	EXIT_LOOP:
 #endif
-	lua_newtable(L);
-	if (!len) return 1;
+	if (!len) {
+		lua_newtable(L);
+		return 1;
+	}
 	input=realloc(input, sizeof(char)*(len+1));
 	input[len]=0;
 	WordArray comm = parse_wordarray(input, len);
+	lua_createtable(L, comm.word_count, 0);
 	for (int i=0; i<comm.word_count; i++) {
 		lua_pushstring(L, comm.words[i]);
 		lua_rawseti(L, -2, i+1);

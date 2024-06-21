@@ -1,10 +1,10 @@
-local args = {...}
+local args = ...
 
 local ENTRIES_PATH = CONFIGS.ENTRIES_PATH
 local io=io
 local find = find
 local ldate = date.new()
-local cdflag = find(args, "-cd") or find(args, "--current-dir")
+local cdflag = args["-cd"] or args["--current-dir"]
 local fullpath = ""
 local file
 
