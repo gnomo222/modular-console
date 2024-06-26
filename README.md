@@ -7,4 +7,4 @@ It allows the creation of new commands by simply adding Lua files to the `comms`
 In order to `make`, you will need to edit the `LUASRCDIR` and `LIBLUA` variables inside the Makefile.  
 To get the liblua.a file, you need to `make` Lua.
 
-Linux testing hasn't begun yet.
+Works with Windows and Linux.
