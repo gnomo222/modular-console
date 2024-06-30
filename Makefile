@@ -13,7 +13,7 @@ OBJDIR = obj
 
 GFS_OBJDIR = ${OBJDIR}/gnomofs
 
-plataform = linux
+platform = unknown
 # possible values: mingw, linux
 
 # If you have UPX (Ultimate Packer for eXecutables), uncomment this line
@@ -35,7 +35,7 @@ RM = rm -f
 S = /
 EXT = .dll
 
-all: ${plataform} lib gnomofs 
+all: ${platform} lib gnomofs 
 
 unknown:
 	$(error please, configure the Makefile)
@@ -49,12 +49,12 @@ linux:
 	$(eval OFLAGS += -lcurses)
 	$(eval EXT := .so)
 
-lib: ${plataform} ${OUTDIR} ${OBJDIR} ${LIB_OBJS}
+lib: ${platform} ${OUTDIR} ${OBJDIR} ${LIB_OBJS}
 	${CC} ${OFLAGS} -o ${OUTDIR}/lib${EXT} ${LIB_OBJS}
 ifdef UPX
 	${UPX} ${OUTDIR}/lib${EXT}
 endif
-gnomofs: ${plataform} ${OUTDIR} ${GFS_OBJDIR} ${GFS_OBJS}
+gnomofs: ${platform} ${OUTDIR} ${GFS_OBJDIR} ${GFS_OBJS}
 	${CC} ${OFLAGS} -o ${OUTDIR}/gnomofs${EXT} ${GFS_OBJS}
 ifdef UPX
 	${UPX} ${OUTDIR}/gnomofs${EXT}
@@ -71,5 +71,5 @@ ${GFS_OBJDIR}:
 	${MKDIR} "$@"
 
 .PHONY: clean
-clean: ${plataform}
+clean: ${platform}
 	${RM} "${OBJDIR}$S*.o" "${GFS_OBJDIR}$S*.o" "${OUTDIR}$S*${EXT}"
