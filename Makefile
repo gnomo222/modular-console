@@ -18,7 +18,7 @@ platform = unknown
 
 # If you have UPX (Ultimate Packer for eXecutables), uncomment this line
 # UPX = upx -q --best --lzma
-# UPX was only tested on Windows
+# UPX may only work on Windows
 
 CC = gcc -std=c17
 CFLAGS = -fPIC -Wall -Wextra -O2 -I${LUASRCDIR} -c
@@ -35,10 +35,11 @@ RM = rm -f
 S = /
 EXT = .dll
 
+.PHONY: all unknown mingw linux clean
 all: ${platform} lib gnomofs 
 
 unknown:
-	$(error please, configure the Makefile)
+	$(error please configure the Makefile by setting the platform variable)
 
 mingw:
 	$(eval S := \)
@@ -61,7 +62,7 @@ ifdef UPX
 endif
 
 ${OBJDIR}/%.o: ${SRCDIR}/%.c
-	${CC} ${CSTD} ${CFLAGS} -o $@ -c $<
+	${CC} ${CFLAGS} -o $@ -c $<
 
 ${OUTDIR}:
 	${MKDIR} "$@"
@@ -70,6 +71,5 @@ ${OBJDIR}:
 ${GFS_OBJDIR}:
 	${MKDIR} "$@"
 
-.PHONY: clean
 clean: ${platform}
 	${RM} "${OBJDIR}$S*.o" "${GFS_OBJDIR}$S*.o" "${OUTDIR}$S*${EXT}"
