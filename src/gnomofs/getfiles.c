@@ -39,7 +39,7 @@ int getfiles(lua_State *L)
 			if (stat(fullpath, &statbuffer) != 0) {
 				free(fullpath);
 				closedir(dir);
-				return 0;
+				return 1;
 			};
 		isfile = S_ISREG(statbuffer.st_mode);
 		if (isfile && (strcmp(entry->d_name+len-extLen,ext) == 0)) {
