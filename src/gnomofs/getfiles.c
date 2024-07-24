@@ -36,11 +36,11 @@ int getfiles(lua_State *L)
 		fullpath[pathlen]='/';
 		memcpy(fullpath+pathlen+1, entry->d_name, len);
 		fullpath[pathlen+len+1]=0;
-			if (stat(fullpath, &statbuffer) != 0) {
-				free(fullpath);
-				closedir(dir);
-				return 1;
-			};
+		if (stat(fullpath, &statbuffer) != 0) {
+			free(fullpath);
+			closedir(dir);
+			return 1;
+		};
 		isfile = S_ISREG(statbuffer.st_mode);
 		if (isfile && (strcmp(entry->d_name+len-extLen,ext) == 0)) {
 			entry->d_name[len-extLen-1]=0;

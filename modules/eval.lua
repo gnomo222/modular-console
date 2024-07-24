@@ -41,9 +41,6 @@ function G.avg(...)
 	for i=1, #args do s=s+args[i] end
 	return s/#args
 end
-function G.assign(k, v) 
-	evalenv[k]=v
-end
 function G.clearenv()
 	for k, _ in G.pairs(evalenv) do evalenv[k]=nil end
 end

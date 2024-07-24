@@ -24,9 +24,14 @@ if #values==0 then write("Expected integer list as 2nd argument\n") return end
 
 local day, mon, year = ldate:get()
 
-fullpath = ENTRIES_PATH..("/%.4d/%.2d/%.2d.txt"):format(year, mon, day)
+monthpath = ENTRIES_PATH..("/%.4d/%.2d/"):format(year, mon)
+fullpath = monthpath .. day .. ".txt"
 file = io.open(fullpath, "a+")
 if not file then file = io.open(fullpath, "w") end
+if not file then 
+	gnomofs.mkdir(monthpath) 
+	file=io.open(fullpath, "w") 
+end
 if not file then write("Error creating file "..fullpath.."\n") return end
 file:write(("%s=%s\n"):format(name, table.concat(values, ",")))
 write("Added to file successfully\n")

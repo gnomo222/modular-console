@@ -1,3 +1,4 @@
 calendar=cal
 remove=del,rmv,rm
 clear=cls
+comms=commands,ls,list
